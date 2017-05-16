@@ -2,6 +2,7 @@ var React = require('react');
 var PropTypes = require('prop-types');
 var api = require('../utils/api');
 
+//return language bar and apply onclick listener
 function SelectLanguage (props) {
   var languages = ['All', 'JavaScript', 'Ruby', 'Java', 'CSS', 'Python'];
 
@@ -11,7 +12,7 @@ function SelectLanguage (props) {
         return (
           <li
             style={lang === props.selectedLanguage ? { color: '#d0021b'} : null}
-            onClick={props.onSelect.bind(null, lang)}
+            onClick={props.onSelect.bind(null, lang)} //calls update language
             key={lang}>
             {lang}
           </li>
@@ -21,11 +22,18 @@ function SelectLanguage (props) {
   )
 }
 
+//prop-types validation
+SelectLanguage.propTypes = {
+  selectedLanguage: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
+}
+
+//return formatted grid of popular repos
 function RepoGrid (props) {
   return (
     <ul className='popular-list'>
       {props.repos.map(function (repo, index) {
-        return(
+        return (
           <li key={repo.name} className='popular-item'>
             <div className='popular-rank'>#{index + 1}</div>
             <ul className='space-list-items'>
@@ -46,13 +54,9 @@ function RepoGrid (props) {
   )
 }
 
+//prop-types validation
 RepoGrid.propTypes = {
   repos: PropTypes.array.isRequired,
-}
-
-SelectLanguage.propTypes = {
-  selectedLanguage: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
 }
 
 class Popular extends React.Component {
@@ -63,9 +67,11 @@ class Popular extends React.Component {
       repos: null
     };
 
+    //binds 'this' context of updateLanguage to Popular
     this.updateLanguage = this.updateLanguage.bind(this);
   }
 
+  //called whenever component succesfully mounts
   componentDidMount() {
     this.updateLanguage(this.state.selectedLanguage);
   }
@@ -78,6 +84,7 @@ class Popular extends React.Component {
       }
     });
 
+    //makes call to api.js and returns github repos
     api.fetchPopularRepos(lang)
     .then(function(repos) {
       this.setState(function () {
